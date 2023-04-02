@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\SlidesController;
+use App\Http\Controllers\ProductsController;
+use App\Models\Slide;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +18,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $slides = Slide::get();
+    return view('home', compact('slides'));
+})->name('home');
+
+Route::get('/shop', function () {
+    return view('shop');
+})->name('shop');
+
+Route::get('/cart', function () {
+    return view('cart');
+})->name('cart');
+
+Route::resource('slides', SlidesController::class);
+Route::resource('products', ProductsController::class);
+Route::resource('orders', OrdersController::class)->only(['index','destroy']);
+
 
 Route::middleware([
     'auth:sanctum',
