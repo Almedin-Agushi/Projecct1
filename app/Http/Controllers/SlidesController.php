@@ -113,7 +113,9 @@ class SlidesController extends Controller
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             $image = time().'-'.$name.'.'.$ext;
 
+            //old photo delete
             Storage::delete($slide->image);
+            //upload new photo
             Storage::putFileAs('public/slides/', $request['image'], $image);
             $slide->image = $image;
         }
@@ -149,5 +151,17 @@ class SlidesController extends Controller
         } else {
             return redirect()->back()->with('status', 'Failed to delete slide image from storage.');
         }
+    }
+
+    public function destroyPhoto(Slide $slide)
+    {
+    // Delete the photo file from the disk
+    Storage::delete('public/slides/' . $slide->image);
+
+    // Update the slide record in the database to remove the photo
+    $slide->image->update(['photo' => null]);
+
+    // Redirect to the index page with a success message
+    return redirect()->route('slides.edit')->with('success', 'Slide photo deleted successfully.');
     }
 }
